@@ -10,11 +10,43 @@
 	
 	\input{portada.tex}
 	
-	\begin{abstract}
-		Hola
-			
-	\end{abstract}
-	
-	\section{Hola2}
-	
+	\section{Definición de las funcionalidades}
+
+        El grupo de entrada y salida (I/O, en adelante) tiene como objetivo primordial el de proveer una capa de abstracción del \textit{hardware}. Simplificando y definiendo protocolos comunes a la la comunicación.
+
+        \begin{itemize}
+          
+        \item \textbf{Interfaz del \textit{hardware}}. Encrgados de transformar la entrada en una salida bien formateada y estándar para el resto de elementos. Por ejemplo: transformar la entrada analógica en un número con dos decimales como máximo.
+
+        \item \textbf{Gestión de los actuadores}. Existe la obligación de llevar a cabo órdenes de alto nivel al que abstraigamos. Por ejemplo: que la orden \enquote{cerrar puerta} haga efectiva la acción del cierre físico de la puerta. (Centrándonos en la consecuencia).
+
+        \item \textbf{Sistema de notificaciones}. Es indispensable la retroalimentación al usuario o de una orden. Con esto se busca dar un \textit{feedback} de cierta actividad eventualmente ocurrida en el acto. Estas se efectuarían mediante componentes físicos como pantallas, leds, dispositivos encargados emisión de sonido, zumbidos y otras señales.
+
+        \item \textbf{Resiliencia a fallos}. El equipo debe garantizar el funcionamiendo adecuado frente a circunstancias adversas tales como la no disposición de un componente del que existe cierta relación e implicación entre ambos involucrados. 
+          
+        \end{itemize}
+
+        \section{Necesidades materiales}
+        \label{sec:nesmat}
+
+        A lo largo de esta sección, quedan listadas los materiales que inicialmente hay planteados utilizar. Acompañas de un correspondiente justificación.
+
+        \begin{itemize}
+
+        \item Menester de \textbf{microcontroladores} como Arduino o RasberryPi que tengan conectividad inalámbrica.
+
+          \subitem Esta última característica es fundamental por la posibilidad de proveer una comunicación libre de cableados de red. De esta forma es fácil la ubicación de algunos componentes.
+
+          \subitem Estos tipos de micrcontroladores tienen una gran presencia en el mundo la automatización, entusiastas y educación. Por lo que no será de tanta dificultad encontrar componentes y documentación de calidad al estar sustentados por una amplia comunidad de usuarios.
+          
+        \item Para el funcionamiento independiente de una red WiFi ya existente y emplear una tecnología que viene como anillo al dedo es utilizar \textbf{LoRaWAN}.
+
+          \subitem Diseñadas para dispositivos IoT de bajo consumo.
+
+          \subitem Fácil instalación. Adicionalmente, abarca áreas de gran alcance con lo que la comunicación entre componentes alocados en la lejanía entre sí pudiesen operar con relativa facilidad.
+
+          
+          
+        \end{itemize}
+        
 \end{document}
