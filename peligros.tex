@@ -1,0 +1,135 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+\title[Aula: Peligros y pizarra]{Tratamiento de peligros y pizarra en un aula inteligente}
+\subtitle{Ingeniería de Mantenimiento de Computadores y Redes}
+\author{Propuesta por Ivan}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+  
+\begin{frame}{Índice}
+  \tableofcontents
+\end{frame}
+
+\section{Detección de peligros}
+
+\begin{frame}{Cambio de paradigma}
+  
+  \begin{block}{Objetivo}
+    Complementar sistemas reactivos basados en \textit{hardware} dedicado con sistemas proactivos basados en \textbf{Visión Artificial} (en adelante, CV por \textit{Computer Vision}).
+  \end{block}
+    
+  \vspace{0.5cm}
+    
+  \begin{itemize}
+  \item \textbf{\textit{Hardware} Tradicional:} Sensores unifuncionales (humo, humedad, PIR). Entradas activas: botón, palanca, lógica con enfoque más \enquote{síncrono}.
+  \item \textbf{Enfoque
+      \textit{Software}/IA:} Uso de cámaras CCTV (cámaras de circuito cerrado, usadas para monitoreo de vídeo de se) existentes + procesamiento en el borde (\textit{Edge Computing}) o \enquote{nube}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{¿Qué riesgos hay un aula?}
+  \small
+  \begin{table}[]
+    \centering
+    \begin{tabular}{p{2cm} p{4cm} p{6cm}}
+      \toprule
+      \textbf{Peligro} & \textbf{Detección Tradicional} & \textbf{Detección por Software (IA)} \\
+      \midrule
+      \textbf{Incendios} & Detectores de humo/térmicos. & \textbf{CNNs} entrenadas para reconocer patrones de flamas y comportamiento volumétrico del humo antes de que alcance el techo. \\
+      \midrule
+            \textbf{Amenazas \newline (Terrorismo)} & Botones de pánico, detectores de metales en puertas. & \textbf{Object Detection (YOLO/SSD)} para identificar armas. Análisis de pose (OpenPose) para detectar lenguaje corporal agresivo. \\
+            \midrule
+            \textbf{Inundaciones} & Sensores de humedad en zócalos. & Segmentación semántica para detectar cambios en la textura del suelo y acumulación de agua. \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Profundización Técnica: Algoritmos de Detección}
+    Para la detección de amenazas mediante cámaras, se propone un pipeline de software:
+    
+    \vspace{0.3cm}
+    
+    \begin{enumerate}
+        \item \textbf{Pre-procesamiento:} Mejora de imagen low-light (para aulas oscuras).
+        \item \textbf{Inferencia:}
+            \begin{itemize}
+                \item \textit{Incendios:} Redes siamesas para diferenciar fuego real de pantallas/reflejos.
+                \item \textit{Intrusión:} Reconocimiento facial (con listas de control) y re-identificación de personas.
+            \end{itemize}
+        \item \textbf{Alerta:} Integración API con servicios de emergencia (sin intervención humana si la certeza $> 95\%$).
+    \end{enumerate}
+\end{frame}
+
+% =============================================================================
+% SECCIÓN 2: UTILIDADES DE PIZARRA
+% =============================================================================
+\section{Digitalización del Aula: Pizarra Inteligente}
+
+\begin{frame}{Captura Inteligente de Contenido}
+    El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente.
+    
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{block}{Disparadores (Triggers)}
+            La captura se activa mediante lógica de software:
+            \begin{itemize}
+                \item \textbf{Botón Físico:} Ad-hoc por el profesor al terminar una explicación.
+                \item \textbf{App Estudiante:} Petición individual vía WebSocket.
+                \item \textbf{Modo "Ad Quorum":} Se dispara solo si el $X\%$ de los alumnos lo solicita en 30 segundos.
+            \end{itemize}
+        \end{block}
+        
+        \column{0.5\textwidth}
+        \begin{alertblock}{Detección Automática}
+            Mediante \textbf{Background Subtraction}, el software detecta cuando la pizarra está "llena" y el profesor se aparta, disparando la foto automáticamente.
+        \end{alertblock}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Privacidad y Post-Procesamiento (GDPR)}
+    Uno de los retos del software en aulas es la privacidad de los alumnos y el profesor.
+    
+    \vspace{0.5cm}
+    
+    \textbf{Pipeline de Anonimización:}
+    \begin{enumerate}
+        \item \textbf{Detección de Rostros:} Uso de modelos ligeros (ej. MTCNN o Haar Cascades) para localizar caras en la imagen de la pizarra.
+        \item \textbf{Aplicación de Blur (Difuminado):} Aplicación de filtro Gaussiano sobre las regiones de interés (ROIs) detectadas.
+        \item \textbf{Rectificación de Perspectiva:} Algoritmo de homografía para transformar la foto lateral en una imagen plana "escaneada".
+        \item \textbf{Mejora de Contraste:} Binarización adaptativa para convertir trazos de tiza/rotulador en digital nítido.
+    \end{enumerate}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Conclusiones
+% -----------------------------------------------------------------------------
+\section{Conclusiones}
+
+\begin{frame}{Resumen de la Propuesta}
+    \begin{itemize}
+        \item La infraestructura se basa en \textbf{software} sobre hardware genérico (cámaras), reduciendo costes de instalación.
+        \item La IA permite una detección de peligros más rápida y contextual (ve el fuego, no solo huele el humo).
+        \item La digitalización de la pizarra respeta la privacidad (blurring) y democratiza el apunte (quorum).
+    \end{itemize}
+    
+    \vspace{1cm}
+    \centering
+    \textit{¿Preguntas?}
+\end{frame}
+
+\end{document}
