@@ -21,14 +21,14 @@
 
 \AtBeginSection[]
 {
-  \begin{frame}
+  \begin{frame}{Índice}
     \tableofcontents[currentsection, hideothersubsections]
   \end{frame}
 }
 
 \AtBeginSubsection[]
 {
-  \begin{frame}
+  \begin{frame}{Índice}
     \tableofcontents[currentsection, currentsubsection, subsectionstyle=show/shaded/hide]
   \end{frame}
 }
@@ -48,17 +48,19 @@
 \begin{frame}{Cambio de paradigma}
   
   \begin{block}{Objetivo}
-    Complementar sistemas reactivos basados en \textit{hardware} dedicado con sistemas proactivos basados en \textbf{Visión Artificial} (en adelante, CV por \textit{Computer Vision}).
+    Complementar sistemas reactivos basados en \textit{hardware} dedicado con sistemas proactivos basados en \textbf{visión artificial} (en adelante, CV por \textit{Computer Vision}).
   \end{block}
     
   \vspace{0.5cm}
     
   \begin{itemize}
-  \item \textbf{\textit{Hardware} Tradicional:} Sensores unifuncionales (humo, humedad, PIR). Entradas activas: botón, palanca, lógica con enfoque más \enquote{síncrono}.
-  \item \textbf{Enfoque \textit{Software}/IA:} Uso de cámaras CCTV (cámaras de circuito cerrado, usadas para monitoreo de vídeo de seguridad) existentes + procesamiento en el borde (\textit{Edge Computing}) o \enquote{nube}.
+  \item \textbf{\textit{Hardware} tradicional:} Sensores unifuncionales (humo, humedad, PIR). Entradas activas: botón, palanca, lógica con enfoque más \enquote{síncrono}.
+  \item \textbf{Enfoque \textit{software}/IA:} Uso de cámaras CCTV (cámaras de circuito cerrado, usadas para monitoreo de vídeo de seguridad) existentes + procesamiento en el borde (\textit{Edge Computing}) o \enquote{nube}.
   \end{itemize}
 \end{frame}
 
+
+\subsection{Riesgos en el aula}
 \begin{frame}{¿Qué riesgos hay en un aula?}
   \begin{itemize}
   \item \textbf{Seguridad:}
@@ -66,7 +68,6 @@
     \item Violencia física (peleas, acoso).
     \item Presencia de armas o bultos de objetos contundentes.
     \item Intrusos en horarios restringidos.
-    \item Presencia de animales salvajes y peligrosos.
     \end{itemize}
   \item \textbf{Integridad del entorno:}
     \begin{itemize}
@@ -86,32 +87,70 @@
   \end{itemize}
 \end{frame}
 
-\subsection{Violencia}
-\begin{frame}{Detectar la violencia}
-  \large{\textbf{Hybrid CNN Xception + LSTM}}
-  \begin{itemize}    
-  \item LSTM = \textit{Long Short-Term Memory}.
-  \item \textbf{Muy preciso} (98\% tasa de acierto) con \textit{datasets} clásicos.
-  \item Eliminación de elementos redundantes.
-  \item Requiere de una \textbf{GPU potente} (Nvidia RTX 3060+).
-  \item Computación muy pesada.
-  \item Masiva etiquetación de \textit{datasets} para mayor precisión.
-  \item Propietaria (sujeta a licencias y costes).
-  \item \textit{Paper} académico: \url{https://iajit.org/upload/files/Hybrid-CNN-Xception-and-Long-Short-Term-Memory-Model-for-the-Detection-of-Interpersonal-Violence-in-Videos.pdf}.
-  \end{itemize}
-
-  $\implies$ emplear \textbf{CNN} (Sistemas Inteligentes).
-\end{frame}
-
-\begin{frame}{Detertar la violencia}
-  \large{\textbf{YOLO}}
+\subsection{Tecnología útil}
+\begin{frame}{\large{\textbf{YOLO}} (\textit{You Only Look Once})}
   \begin{itemize}
-  \item Código abierto (OSS, \textit{Open Source Software}).
-  \item Usado también para \textbf{atención de alumnos}: https://www.mdpi.com/1424-8220/25/22/6972
+  \item \textbf{Rápido y preciso}.
+  \item Sensibilidad a oclusiones.
+  \item \textbf{Navaja suiza}: Detección, segmentación, seguimiento, poses...
+  \item Código abierto (OSS, \textit{Open Source Software}). \url{https://github.com/ultralytics/ultralytics}.
+  \item Usado también para \textbf{atención de alumnos}: \url{https://www.mdpi.com/1424-8220/25/22/6972}
+  \item En \textbf{tiempo real} a través de cámaras IP a servidor local.
+  \item Usado para detectar robo, violencia, vandalismo, fuego...
+  \item \textbf{Fuego}: \url{https://github.com/MuhammadMoinFaisal/FireDetectionYOLOv8}.
+  \item \textbf{Armas}: \url{https://www.nature.com/articles/s41598-025-07782-0}, \url{https://github.com/swatified/Weapon-Detection-System}.
   \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{\large{\textbf{YOLO}} (\textit{You Only Look Once})}
+  \begin{itemize}
+  \item \textbf{Ataque de pánico, aglomeraciones}: \url{https://github.com/moego0/panic-attack-detector}, \url{https://github.com/jinay-k-jain/Panic_detector_CCTV}.
+    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\textbf{Audio \textit{transformers}}}
+  \begin{itemize}
+  \item 
+  \item 
+  \item 
+  \item 
+  \item 
+  \item 
+  \item \textbf{}:
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Otros...}
+  \textbf{Sismos} (ESP32 + MPU-6050): \url{https://github.com/serdaraltin/earthquake-warning-system}.
+\end{frame}
+
+\subsection{Infraestructura}
+\begin{frame}{¿Qué tenemos a disposición?}
+  \begin{itemize}
+  \item 600€ de presupuesto en nuevo \textit{hardware}.
+  \item Electrónica de otros años.
+    \begin{itemize}
+    \item Placas de Arduino.
+    \item Rasberry Pi.
+    \item ESP32.
+    \end{itemize}
+  \item Ordenadores del aula.
+    \begin{itemize}
+    \item GPU: Nvidia GTX 1660.
+    \end{itemize}
+  \end{itemize}
+
+  \begin{center}
+    \LARGE{\textbf{¡Relajar restricciones!}}
+  \end{center}
+
+  \begin{enumerate}
+  \item Una cámara $\rightarrow$ un propósito.
+  \item Reducir FPS $\rightarrow$ no tiempo real.
+  \item Procesamiento centralizado (SPOF). ¿Pero como funciona vigilancia en urbanización?
+  \end{enumerate}
+
   \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}
   \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}
   \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc}
