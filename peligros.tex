@@ -8,11 +8,30 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{booktabs}
 
 \title[Aula: Peligros y pizarra]{Tratamiento de peligros y pizarra en un aula inteligente}
 \subtitle{Ingeniería de Mantenimiento de Computadores y Redes}
 \author{Propuesta por Ivan}
 \date{\today}
+
+\setcounter{tocdepth}{2}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}
+    \tableofcontents[currentsection, currentsubsection, subsectionstyle=show/shaded/hide]
+  \end{frame}
+}
 
 \begin{document}
 
@@ -36,9 +55,68 @@
     
   \begin{itemize}
   \item \textbf{\textit{Hardware} Tradicional:} Sensores unifuncionales (humo, humedad, PIR). Entradas activas: botón, palanca, lógica con enfoque más \enquote{síncrono}.
-  \item \textbf{Enfoque
-      \textit{Software}/IA:} Uso de cámaras CCTV (cámaras de circuito cerrado, usadas para monitoreo de vídeo de se) existentes + procesamiento en el borde (\textit{Edge Computing}) o \enquote{nube}.
+  \item \textbf{Enfoque \textit{Software}/IA:} Uso de cámaras CCTV (cámaras de circuito cerrado, usadas para monitoreo de vídeo de seguridad) existentes + procesamiento en el borde (\textit{Edge Computing}) o \enquote{nube}.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{¿Qué riesgos hay en un aula?}
+  \begin{itemize}
+  \item \textbf{Seguridad:}
+    \begin{itemize}
+    \item Violencia física (peleas, acoso).
+    \item Presencia de armas o bultos de objetos contundentes.
+    \item Intrusos en horarios restringidos.
+    \item Presencia de animales salvajes y peligrosos.
+    \end{itemize}
+  \item \textbf{Integridad del entorno:}
+    \begin{itemize}
+    \item Incendios (análisis espectral y de movimiento).
+    \item Inundaciones (análisis de textura en suelos).
+    \item Bloqueo de salidas de emergencia (análisis espacial).
+    \item Terremotos y actividad sísmica (temblores).
+    \item Desprendimientos de objetos así como lanzamiento.
+    \item Vandalismo (pintadas, comportamiento canalla...).
+    \end{itemize}
+  \item \textbf{Salud y bienestar:}
+    \begin{itemize}
+    \item Caídas y desmayos.
+    \item Detección de pánico o aglomeraciones.
+    \item Contaminación acústica (ruido estridente, chillidos...).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Violencia}
+\begin{frame}{Detectar la violencia}
+  \large{\textbf{Hybrid CNN Xception + LSTM}}
+  \begin{itemize}    
+  \item LSTM = \textit{Long Short-Term Memory}.
+  \item \textbf{Muy preciso} (98\% tasa de acierto) con \textit{datasets} clásicos.
+  \item Eliminación de elementos redundantes.
+  \item Requiere de una \textbf{GPU potente} (Nvidia RTX 3060+).
+  \item Computación muy pesada.
+  \item Masiva etiquetación de \textit{datasets} para mayor precisión.
+  \item Propietaria (sujeta a licencias y costes).
+  \item \textit{Paper} académico: \url{https://iajit.org/upload/files/Hybrid-CNN-Xception-and-Long-Short-Term-Memory-Model-for-the-Detection-of-Interpersonal-Violence-in-Videos.pdf}.
+  \end{itemize}
+
+  $\implies$ emplear \textbf{CNN} (Sistemas Inteligentes).
+\end{frame}
+
+\begin{frame}{Detertar la violencia}
+  \large{\textbf{YOLO}}
+  \begin{itemize}
+  \item Código abierto (OSS, \textit{Open Source Software}).
+  \item Usado también para \textbf{atención de alumnos}: https://www.mdpi.com/1424-8220/25/22/6972
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}
+  \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}
+  \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc}
+  \url{https://www.youtube.com/watch?v=vEtsmg7-fWs}
+
 \end{frame}
 
 \begin{frame}{¿Qué riesgos hay un aula?}
