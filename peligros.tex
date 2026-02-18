@@ -327,13 +327,13 @@
   La pizarra es un recurso muy utilizado por el profesorado para ilustrar ideas, resolución de ejercicios y conceptos. La información de la pizarra al cabo de una sesión no está disponible. Lo cual dificulta el seguimiento de la clase para aquellos más despistados, sentados más lejos, lentitud, mala visibilidad o cualquier otra dificultad en tanto que interfiera...  
   \vspace{1cm}
   
-  \begin{itemize}
+  \begin{enumerate}
   \item Facilitar la \textbf{grabación y \textit{streaming}} de clases.
   \item \textbf{Seguimiento de movimiento} del profesor para el punto anterior.
   \item Guardar un \textbf{historial} del trazado de la pizarra.
   \item \textbf{Transcripciones de voz} de la lección.
   \item \textbf{Accesibilidad} (intérpretes, traductores...). 
-  \end{itemize}
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}{Experiencias previas}
@@ -363,60 +363,75 @@
 \subsection{Restricciones}
 \begin{frame}{Consideraciones}
   El sistema debe:
-  \begin{enumerate}
+  \begin{itemize}
   \item Estar \textbf{a merced del profesor} como una herramienta. Y es este quién decida cuando hacerla servir.
-  \item Garantizar la \textbf{privacidad} (GDPR). 
+  \item Garantizar la \textbf{privacidad} (GDPR). Tratamiendo de datos en \textit{edge} o en local.
+  \item Fácil mecanismo para \textbf{cambiar parámetros}: \textit{ON} $\leftrightarrow$ \textit{OFF}, historial sí $\leftrightarrow$ no, movimiento sí $\leftrightarrow$ no... 
+  \item \textbf{Independiente} al tipo de pizarra (da igual si es de tiza o digital).
+  \item Tener la posibilidad de guardar (\textbf{exportación}) el vídeo/traza de la pizarra en fichero.
+  \item ¿Tareas paralelas? (Grabar y sacar grabados de la pizarra).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Emisiones en vivo. Grabaciones.}
+  No es de extrañar que la mayoría de los profesores hagan servir el ordenador de clase para presentar transparencias. Donde pueden utilizarlo para configurar el directo y guardados.
+  \vspace{.5cm}
+  
+  Para una mayor permitir mayor flexibilidad puede:
+  \begin{itemize}
+  \item Tener un \textbf{mando IR} o \textbf{algo físico} que indique qué hacer a la cámara. (opción con limitaciones)
+  \item \textbf{Aplicación web} en la que el profesor decida los parámetros.
+  \end{itemize}
+
+  \vspace{.5cm}
+  También sería interesante conocer el horario del aula para notificar el cese del contenido y el uso que se le dé a la cámara.
+
+  \vspace{.5cm}  
+  Véase programas como OBS o VLC para la gestión multimedia. 
+\end{frame}
+
+\subsection{\textit{Software} para implementar}
+\begin{frame}{¿Cuándo capturar trazas?}  
+  
+  El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente. Dos formas de hacerlo:
+  
+  \begin{columns}
+    \column{0.4840829572\textwidth}
+    \begin{block}{Disparador}
+      La captura se activa mediante un \textbf{botón físico} solicitado por el profesor al terminar una explicación.
+    \end{block}
+    
+    \column{0.4840829572\textwidth}
+    \begin{alertblock}{Detección automática}
+      Mediante \textbf{\textit{background subtraction}}, el \textit{software} detecta cuando la pizarra está \enquote{llena} y el profesor se aparta, disparando la foto automáticamente.
+    \end{alertblock}
+  \end{columns}
+
+  \begin{itemize}
+  \item Demo de \textit{background substraction} con OpenCV: \url{https://docs.opencv.org/4.x/d1/dc5/tutorial_background_subtraction.html}.
+  \item \textbf{Cámara PTZ con \textit{auto-tracking}}: \url{https://github.com/AutoPTZ/autoptz}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Privacidad y procesamiento}
+  \textbf{Proceso de anonimización:}
+  \begin{enumerate}
+  \item \textbf{Detección de rostros:} Uso de modelos ligeros (ej. MTCNN o Haar Cascades) para localizar caras en la imagen de la pizarra.
+  \item \textbf{Aplicación de difuminado:} Gaussiana sobre las regiones de interés (ROIs) detectadas.
+  \item \textbf{Rectificación de la perspectiva:} Algoritmo de homografía para transformar la foto lateral en una imagen plana escaneada.
+  \item \textbf{Mejora de contraste:} Binarización adaptativa para convertir trazos de tiza/rotulador en digital nítido.
+  \item \textbf{Extracción en texto:} Bien uitilizar OCR para sacar texto de imagen o Whisper (OpenAI) para el audio $\rightarrow$ transcripción y subtítulos.
+  \item \textbf{Exportación a múltiples formatos:} Bien entre documentos (pandoc) o entre vídeo (ffmpeg). 
   \end{enumerate}
 \end{frame}
 
-\begin{frame}{Pizarra++}  
- 
-El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente.
-    
-    \begin{columns}
-        \column{0.5\textwidth}
-        \begin{block}{Disparadores (Triggers)}
-            La captura se activa mediante lógica de software:
-            \begin{itemize}
-                \item \textbf{Botón Físico:} Ad-hoc por el profesor al terminar una explicación.
-                \item \textbf{App Estudiante:} Petición individual vía WebSocket.
-                \item \textbf{Modo "Ad Quorum":} Se dispara solo si el $X\%$ de los alumnos lo solicita en 30 segundos.
-            \end{itemize}
-        \end{block}
-        
-        \column{0.5\textwidth}
-        \begin{alertblock}{Detección Automática}
-            Mediante \textbf{Background Subtraction}, el software detecta cuando la pizarra está "llena" y el profesor se aparta, disparando la foto automáticamente.
-        \end{alertblock}
-    \end{columns}
+\begin{frame}{Enlaces de interés}
+  \begin{itemize}
+  \item \textbf{Pandoc:} \url{https://pandoc.org/}.
+  \item \textbf{ffmpeg:} \url{https://ffmpeg.org/}.
+  \item \textbf{Whisper:} \url{https://github.com/openai/whisper}.
+  \item \textbf{Tesseract OCR:} \url{https://github.com/tesseract-ocr/tesseract}.
+  \item \textbf{MTCNN:} \url{https://github.com/ipazc/mtcnn}.
+  \end{itemize}
 \end{frame}
-
-\begin{frame}{Privacidad y Post-Procesamiento (GDPR)}
-    Uno de los retos del software en aulas es la privacidad de los alumnos y el profesor.
-    
-    \vspace{0.5cm}
-    
-    \textbf{Pipeline de Anonimización:}
-    \begin{enumerate}
-        \item \textbf{Detección de Rostros:} Uso de modelos ligeros (ej. MTCNN o Haar Cascades) para localizar caras en la imagen de la pizarra.
-        \item \textbf{Aplicación de Blur (Difuminado):} Aplicación de filtro Gaussiano sobre las regiones de interés (ROIs) detectadas.
-        \item \textbf{Rectificación de Perspectiva:} Algoritmo de homografía para transformar la foto lateral en una imagen plana "escaneada".
-        \item \textbf{Mejora de Contraste:} Binarización adaptativa para convertir trazos de tiza/rotulador en digital nítido.
-    \end{enumerate}
-\end{frame}
-
-\section{Conclusiones}
-
-\begin{frame}{Resumen de la Propuesta}
-    \begin{itemize}
-        \item La infraestructura se basa en \textbf{software} sobre hardware genérico (cámaras), reduciendo costes de instalación.
-        \item La IA permite una detección de peligros más rápida y contextual (ve el fuego, no solo huele el humo).
-        \item La digitalización de la pizarra respeta la privacidad (blurring) y democratiza el apunte (quorum).
-    \end{itemize}
-    
-    \vspace{1cm}
-    \centering
-    \textit{¿Preguntas?}
-\end{frame}
-
 \end{document}
