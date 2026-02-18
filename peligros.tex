@@ -212,8 +212,6 @@
   \end{block}
 \end{frame}
 
-
-
 \begin{frame}{Audio: gritos, auxilio, ruido estridente...}
   \begin{itemize}
   \item \textbf{Clasificador de sonido de Tensorflow} YAMNet \url{https://www.tensorflow.org/hub/tutorials/yamnet?hl=es-419}.
@@ -246,12 +244,11 @@
   \textbf{Privacidad garantizada.} Almacenar ¿qué eventos peligrosos (\textit{Edge}).
   \end{frame}
 
-
-
 \begin{frame}{No todo se detecta mejor con IA}
   \begin{itemize}
   \item \textbf{Fuegos, inundaciones}.
   \item \textbf{Sismos} (ESP32 + MPU-6050): \url{https://github.com/serdaraltin/earthquake-warning-system}.
+  \item \textbf{SmartUniversity} IoT de la UA que captura diferentes parámetros de afluencia y temporal.
   \end{itemize}
 \end{frame}
 
@@ -289,44 +286,85 @@
   \begin{enumerate}
   \item Una cámara $\rightarrow$ un propósito.
   \item Reducir FPS $\rightarrow$ no tiempo real.
-  \item Procesamiento centralizado (SPOF). ¿cómo vigilancia en urbanización?
+  \item Procesamiento centralizado (SPOF). ¿vigilancia urbanización?
   \item Combiando estrategias (o aplicando divide y vencerás para el reparto de responsabilidad): \textit{edge} detecta que hay personas, \textit{server} averigua quienes son.
   \end{enumerate}
 \end{frame}
 
 \begin{frame}{Ejecución en \textit{hardware} limitado}
   \small
-    No todo el \textit{hardware} puede procesar las millones de operaciones matriciales de una CNN. Clasificación por niveles:
-    
-    \vspace{0.3cm}
-    \begin{table}[]
-      \centering
-      \resizebox{\textwidth}{!}{
-        \begin{tabular}{l l l l}
-          \toprule
-          \textbf{Dispositivo} & \textbf{Capacidad CNN} & \textbf{Tecnología} & \textbf{Uso} \\
-          \midrule
-          \textbf{Raspberry Pi 5} & \textbf{Alta} & Python, TensorFlow, PyTorch & Corre YOLO/MediaPipe para análisis complejo. \\
-          \midrule
-          \textbf{ESP32-S3} & \textbf{Limitada (TinyML)} & TFLite Micro, C++ & Sensor auxiliar. Solo clasificación simple (Person/No-Person). \\
-          \midrule
-          \textbf{Arduino Uno} & \textbf{Nula} & - & Solo control de relés/luces. No procesa imagen. \\
-          \midrule
-          \textbf{Arduino Portenta} & \textbf{Media} & OpenMV, Edge Impulse & Similar al ESP32 pero grado industrial. \\
-          \bottomrule
-        \end{tabular}
-        }
-      \end{table}
-      \vspace{0.2cm}
-    Es importante la \textbf{cuantización.} Para correr en ESP32, los modelos se comprimen de \texttt{float32} a \texttt{int8}, reduciendo el tamaño del modelo de 50MB a $<500$KB.
+  No todo el \textit{hardware} puede procesar las millones de operaciones matriciales de una CNN. Clasificación por niveles:
+  
+  \vspace{0.3cm}
+  \begin{table}[]
+    \centering
+    \resizebox{\textwidth}{!}{
+      \begin{tabular}{l l l l}
+        \toprule
+        \textbf{Dispositivo} & \textbf{Capacidad CNN} & \textbf{Tecnología} & \textbf{Uso} \\
+        \midrule
+        \textbf{Raspberry Pi 5} & \textbf{Alta} & Python, TensorFlow, PyTorch & Corre YOLO/MediaPipe para análisis complejo. \\
+        \midrule
+        \textbf{ESP32-S3} & \textbf{Limitada (TinyML)} & TFLite Micro, C++ & Sensor auxiliar. Solo clasificación simple (Person/No-Person). \\
+        \midrule
+        \textbf{Arduino Uno} & \textbf{Nula} & - & Solo control de relés/luces. No procesa imagen. \\
+        \midrule
+        \textbf{Arduino Portenta} & \textbf{Media} & OpenMV, Edge Impulse & Similar al ESP32 pero grado industrial. \\
+        \bottomrule
+      \end{tabular}
+    }
+  \end{table}
+  \vspace{0.2cm} Es importante la \textbf{cuantización.} Para correr en ESP32, los modelos se comprimen de \texttt{float32} a \texttt{int8}, reduciendo el tamaño del modelo de 50MB a $<500$KB.
+  
+  \begin{center}
+    \LARGE{\textbf{¡Optimizar!}}
+  \end{center}
+\end{frame}
 
-    \begin{center}
-      \LARGE{\textbf{¡Optimizar!}}
-    \end{center}
-  \end{frame}
+\section{Pizarra++}
+\begin{frame}{Ideas para apuntar}
+  La pizarra es un recurso muy utilizado por el profesorado para ilustrar ideas, resolución de ejercicios y conceptos. La información de la pizarra al cabo de una sesión no está disponible. Lo cual dificulta el seguimiento de la clase para aquellos más despistados, sentados más lejos, lentitud, mala visibilidad o cualquier otra dificultad en tanto que interfiera...  
+  \vspace{1cm}
+  
+  \begin{itemize}
+  \item Facilitar la \textbf{grabación y \textit{streaming}} de clases.
+  \item \textbf{Seguimiento de movimiento} del profesor para el punto anterior.
+  \item Guardar un \textbf{historial} del trazado de la pizarra.
+  \item \textbf{Transcripciones de voz} de la lección.
+  \item \textbf{Accesibilidad} (intérpretes, traductores...). 
+  \end{itemize}
+\end{frame}
 
-\section{Digitalización del Aula: Pizarra Inteligente}
-\begin{frame}{Captura Inteligente de Contenido}
+\begin{frame}{Experiencias previas}
+  \begin{enumerate}
+  \item Durante la pandemia del \textbf{covid}:
+    \begin{itemize}
+    \item Las reuniones a través de videollamadas.
+    \item Poca preparación, mal audio, aplicaciones propietarias (no FOSS).
+    \item Compatir pantalla, pizarra con mala visibiidad.
+    \item Profesores pueden emplear otras para difundir conocimiento: \url{https://youtu.be/_KNxz2YyhgA}. 
+    \end{itemize}
+  \item El seguimiento del movimiento del profesor puede hacerse de \textbf{forma automática} desde la configuración de algunas cámaras.
+    \begin{itemize}
+    \item \url{https://youtu.be/ZA-tUyM_y7s&t=120}.
+    \item Aunque siempre se deba contemplar una opción manual.
+    \end{itemize}
+  \item \textbf{Guardar algo escrito de la pizarra}.
+    \begin{itemize}
+    \item Fotos a la pizarra $\rightarrow$ mala calidad al detalle $\land$ rostros no deseados.
+    \item Materiales docentes, almacenamiento en la \enquote{nube}...
+    \end{itemize}
+  \item A partir de los vídeos \textbf{es posible extraer una transcripción}.
+  \item Garantizar \textbf{accesibilidad} para personas ciegas (braille), sordas de lo acontecido en la sección (generar intérpretes).
+  \end{enumerate}
+\end{frame}
+
+\subsection{Restricciones}
+
+
+
+\begin{frame}{Pizarra++}  
+ 
 El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente.
     
     \begin{columns}
@@ -361,9 +399,6 @@ El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra ana
     \end{enumerate}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-% Conclusiones
-% -----------------------------------------------------------------------------
 \section{Conclusiones}
 
 \begin{frame}{Resumen de la Propuesta}
