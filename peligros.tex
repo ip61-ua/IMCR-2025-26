@@ -12,7 +12,7 @@
 \usepackage{csquotes}
 \usepackage{booktabs}
 
-\title[Aula: Peligros y pizarra]{Tratamiento de peligros y pizarra en un aula inteligente}
+\title[Aula: Peligros y pizarra]{\textit{State of the Art}: peligros y pizarra del aula inteligente}
 \subtitle{Ingeniería de Mantenimiento de Computadores y Redes}
 \author{Propuesta por Ivan}
 \date{\today}
@@ -113,6 +113,16 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{\textbf{CNN} (\textit{Convolutional Neural Networks})}
+  \begin{itemize}
+  \item \textbf{Extracción de características:} Aprende automáticamente a detectar bordes, texturas y formas sin programación manual.
+  \item \textbf{Jerarquía Visual:} 
+    $$ \text{Bordes} \to \text{Formas simples} \to \text{Objetos complejos} $$
+  \item \textbf{Invarianza:} Reconoce el objeto independientemente de su posición $(x,y)$ en la imagen.
+  \item El \textbf{\textit{kernel}} (filtro) recorre la matriz de píxeles calculando el producto escalar para detectar patrones.
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Violencia}
   \begin{itemize}
   \item La violencia es un \textbf{acto temporal} $\rightarrow$ secuencia memoria.
@@ -128,7 +138,8 @@
     \item Preciso. De Facebook. OSS.
     \item Computación pesada.
     \item Dos modos de funcionamiento: \textit{slow} (¿quién es?), \textit{fast} (movimiento)
-    \end{itemize}    
+    \end{itemize}
+  \item Ejemplo detección de violencia y vandalismo \url{https://github.com/Ab-code00/SurakshaAI---Real-Time-Suspicious-Activity-Detection-System}. 
   \end{itemize}
 \end{frame}
 
@@ -155,8 +166,9 @@
   \item Puede producirse en \textbf{sitios ocultos} donde la cámara no vea.
   \item Versiones \textit{custom} de YOLO.
   \end{itemize}
-  \large $\implies$ Detección por IA como complementario para anticipar.
-
+  {\large $\implies$ Detección por IA como complementario para anticipar.}
+  \normalsize
+  
   \vspace{.5cm}
   Agua
   \begin{itemize}
@@ -166,6 +178,7 @@
   \item Causas naturales $\rightarrow$ otros asuntos, meteo...
   \end{itemize}
   \large $\implies$ Interés en prevenir (tuberías rotas, fraturas...). Conocer  aula concreta.
+  
 \end{frame}
 
 \begin{frame}{Caídas y desmayos}
@@ -183,20 +196,57 @@
     \end{itemize}
   \item ¿Oclusión? Inferencia en base a lo visible.
   \item Tecologías a gastar: YOLO, YOLO-pose, BoT-SORT y ByteTrack.
+  \item \textbf{OpenPifPaf}: \url{https://github.com/cwlroda/falldetection_openpifpaf}.
+  \item \textbf{AlphaPose}: \url{https://github.com/GajuuzZ/Human-Falling-Detect-Tracks}.
+  \item \textbf{Multicam}: \url{https://github.com/taufeeque9/HumanFallDetection}.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{\textbf{Audio \textit{transformers}}}
-  \begin{itemize}
-  \item 
-  \item 
-  \item 
-  \item 
-  \item 
-  \item 
-  \item \textbf{}:
-  \end{itemize}
+\begin{frame}{Bloqueo de salidas}
+  Detectar objetos (mochilas, mesas) que permanecen en vías de evacuación o que impidan una salida normal. \textbf{Diferenciar un bloqueo real} de un tránsito momentáneo.
+  
+  \begin{block}{Algoritmo: IoU (\textit{Intersection over Union}) Temporal}
+    Sea $P_{salida}$ el polígono de la salida, $B_{bulto}$ la caja del objeto y $T$ el tiempo transcurrido desde que se detecta la obstrucción:
+    $$ \text{Solape} = \frac{\text{Área}(P_{salida} \cap B_{bulto})}{\text{Área}(P_{salida})} $$
+    $$ (\text{Solape} > 0.3) \land (T > 60s) \rightarrow \text{Alerta} $$
+  \end{block}
 \end{frame}
+
+
+
+\begin{frame}{Audio: gritos, auxilio, ruido estridente...}
+  \begin{itemize}
+  \item \textbf{Clasificador de sonido de Tensorflow} YAMNet \url{https://www.tensorflow.org/hub/tutorials/yamnet?hl=es-419}.
+  \item Micrófono I2S: \url{https://opencircuit.es/producto/fermion-i2s-mems-microphone-breakout}.
+  \end{itemize}
+  
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Procesamiento (YAMNet):}
+    \begin{enumerate}
+    \item \textbf{Entrada:} Micrófono I2S (MEMS) en la Raspberry Pi.
+    \item \textbf{Preprocesar:} Transformada de Fourier $\to$ Mel-Spectrogram (Redes de los Computadores).
+    \item \textbf{Clasificación:} CNN ligera (MobileNet) entrenada en \textit{AudioSet}.
+    \end{enumerate}
+    
+    \column{0.4840829572\textwidth}
+    \centering
+    \begin{block}{Eventos Críticos}
+      \begin{itemize}
+      \item \textbf{Gritos:} Agresión o Pánico.
+      \item \textbf{Destrucción:} Vandalismo.
+      \item \textbf{Palabras clave:} \enquote{¡Socorro!}, \enquote{¡Ayuda!} (TinyML).
+      \end{itemize}
+    \end{block}
+    
+    Ejemplo: \url{https://github.com/Varun-310/SCREAM}
+  \end{columns}
+  
+  \vspace{0.3cm}
+  \textbf{Privacidad garantizada.} Almacenar ¿qué eventos peligrosos (\textit{Edge}).
+  \end{frame}
+
+
 
 \begin{frame}{No todo se detecta mejor con IA}
   \begin{itemize}
@@ -209,11 +259,10 @@
   \begin{itemize}
   \item \textbf{Fuego}: \url{https://github.com/MuhammadMoinFaisal/FireDetectionYOLOv8}.
   \item \textbf{Armas}: \url{https://www.nature.com/articles/s41598-025-07782-0}, \url{https://github.com/swatified/Weapon-Detection-System}.
-  \item \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}  
-  \item \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}  
-  \item \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc}  
-  \item \url{https://www.youtube.com/watch?v=vEtsmg7-fWs}  
+  \item \textbf{Violencia}: \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}, \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}, \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc} 
+  \item \textbf{Caídas}: \url{https://www.youtube.com/watch?v=vEtsmg7-fWs}  
   \item \textbf{Ataque de pánico, aglomeraciones}: \url{https://github.com/moego0/panic-attack-detector}, \url{https://github.com/jinay-k-jain/Panic_detector_CCTV}.
+  \item \textbf{Vandalismo}: \url{https://ieeexplore.ieee.org/document/10895139}.
   \end{itemize}
 \end{frame}
 
@@ -245,9 +294,40 @@
   \end{enumerate}
 \end{frame}
 
+\begin{frame}{Ejecución en \textit{hardware} limitado}
+  \small
+    No todo el \textit{hardware} puede procesar las millones de operaciones matriciales de una CNN. Clasificación por niveles:
+    
+    \vspace{0.3cm}
+    \begin{table}[]
+      \centering
+      \resizebox{\textwidth}{!}{
+        \begin{tabular}{l l l l}
+          \toprule
+          \textbf{Dispositivo} & \textbf{Capacidad CNN} & \textbf{Tecnología} & \textbf{Uso} \\
+          \midrule
+          \textbf{Raspberry Pi 5} & \textbf{Alta} & Python, TensorFlow, PyTorch & Corre YOLO/MediaPipe para análisis complejo. \\
+          \midrule
+          \textbf{ESP32-S3} & \textbf{Limitada (TinyML)} & TFLite Micro, C++ & Sensor auxiliar. Solo clasificación simple (Person/No-Person). \\
+          \midrule
+          \textbf{Arduino Uno} & \textbf{Nula} & - & Solo control de relés/luces. No procesa imagen. \\
+          \midrule
+          \textbf{Arduino Portenta} & \textbf{Media} & OpenMV, Edge Impulse & Similar al ESP32 pero grado industrial. \\
+          \bottomrule
+        \end{tabular}
+        }
+      \end{table}
+      \vspace{0.2cm}
+    Es importante la \textbf{cuantización.} Para correr en ESP32, los modelos se comprimen de \texttt{float32} a \texttt{int8}, reduciendo el tamaño del modelo de 50MB a $<500$KB.
+
+    \begin{center}
+      \LARGE{\textbf{¡Optimizar!}}
+    \end{center}
+  \end{frame}
+
 \section{Digitalización del Aula: Pizarra Inteligente}
 \begin{frame}{Captura Inteligente de Contenido}
-    El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente.
+El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente.
     
     \begin{columns}
         \column{0.5\textwidth}
