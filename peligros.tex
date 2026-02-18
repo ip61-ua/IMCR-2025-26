@@ -97,16 +97,75 @@
   \item Usado también para \textbf{atención de alumnos}: \url{https://www.mdpi.com/1424-8220/25/22/6972}
   \item En \textbf{tiempo real} a través de cámaras IP a servidor local.
   \item Usado para detectar robo, violencia, vandalismo, fuego...
-  \item \textbf{Fuego}: \url{https://github.com/MuhammadMoinFaisal/FireDetectionYOLOv8}.
-  \item \textbf{Armas}: \url{https://www.nature.com/articles/s41598-025-07782-0}, \url{https://github.com/swatified/Weapon-Detection-System}.
+  \item Plausible en \textit{hardware} limitado si se relajan restricciones.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{\large{\textbf{YOLO}} (\textit{You Only Look Once})}
+\begin{frame}{\textbf{Google MediaPipe}}
   \begin{itemize}
-  \item \textbf{Ataque de pánico, aglomeraciones}: \url{https://github.com/moego0/panic-attack-detector}, \url{https://github.com/jinay-k-jain/Panic_detector_CCTV}.
-    
+  \item Rápida sturación con multitud.
+  \item Eficiente al poder ejecutarse en \textbf{móviles} (pensado para sin GPU dedicada).
+  \item Mejor captura de la profundidad.
+  \item OSS.
+  \item \textbf{Navaja suiza}.
+  \item ¿Optimizado para Rasberry Pi? (\enquote{\textit{¿Gemini hablando bien de Google?}}).
+  \item \url{https://github.com/google-ai-edge/mediapipe}.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Violencia}
+  \begin{itemize}
+  \item La violencia es un \textbf{acto temporal} $\rightarrow$ secuencia memoria.
+  \item \textbf{YOLO} por si solo le cuesta $\rightarrow$ YOLO-Pose. Precisamos de una TPU si hacer en el \textit{edge}.
+  \item \textbf{YOLO-Pose/Google MediaPipe}+\textbf{LSTM} ({\small \textit{Long Short Term Memory}}).
+    \begin{itemize}
+    \item Clasificador temporal.
+    \item \textit{Hardware} modesto $\rightarrow$ \textbf{privacidad}.
+    \item \textbf{Oclusiones y OSS}.
+    \end{itemize}
+  \item \textbf{SlowFast}
+    \begin{itemize}
+    \item Preciso. De Facebook. OSS.
+    \item Computación pesada.
+    \item Dos modos de funcionamiento: \textit{slow} (¿quién es?), \textit{fast} (movimiento)
+    \end{itemize}    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Detección de intrusos}
+  \begin{itemize}
+  \item \textbf{Objetivo}: saltar alarma si viene alguien no deseado en determinado horario. 
+  \item Cuádruple reto: \textbf{reconocimiento facial} + \textbf{horarios} + \textbf{lista blanca} + \textbf{privacidad}.
+  \item Variantes:
+    \begin{enumerate}
+    \item Naive: hay personas $\land$ fuera de horario $\rightarrow$ alarma.
+    \item Reconocer caras $\rightarrow$ ¿Privacidad? ¿Niños? ¿Ejercer derecho?. Necesidad de una DB actualizada $\rightarrow$ lío legal. 
+    \item ¿Quién decide entrar y hasta dónde puede? (Absurdo no dejar entrar visita, familiares, servicios públicos, nuevo personal $\notin$ DB) $\rightarrow$ ¿1984?
+    \end{enumerate}
+  \item Merodeos: \url{https://github.com/nwojke/deep_sort}.
+  \item \url{https://github.com/hectorpadin1/Network-Intrusion-Detection-System}.
+  \item Otro enfoque, analizar la red: \url{https://yardenfalik.github.io/IDS-Project/}. (Esto sale en la teoría de Sistemas Distribuidos).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Incendios e inundaciones}
+  Fuego
+  \begin{itemize}
+  \item \textbf{no tiene forma fija, \enquote{parpadea}, brilla, reflja}.
+  \item Puede producirse en \textbf{sitios ocultos} donde la cámara no vea.
+  \item Versiones \textit{custom} de YOLO.
+  \end{itemize}
+  \large $\implies$ Detección por IA como complementario para anticipar.
+
+  \vspace{.5cm}
+  Agua
+  \begin{itemize}
+  \item \textbf{No se busca encontrar líquido} sino otras características.
+  \item \textbf{Reflejos} (da igual si es sucia o transparente).
+  \item Detección del suelo mojado píxel a píxel (U-Net, DeepLabV3+).
+  \item Causas naturales $\rightarrow$ otros asuntos, meteo...
+  \end{itemize}
+  \large $\implies$ Interés en prevenir (tuberías rotas, fraturas...). Conocer  aula concreta.
 \end{frame}
 
 \begin{frame}{\textbf{Audio \textit{transformers}}}
@@ -121,8 +180,21 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Otros...}
+\begin{frame}{No todo se detecta mejor con IA}
+  \textbf{Fuegos, inundaciones}.
   \textbf{Sismos} (ESP32 + MPU-6050): \url{https://github.com/serdaraltin/earthquake-warning-system}.
+\end{frame}
+
+\begin{frame}{Demostraciones}
+  \begin{itemize}
+  \item \textbf{Fuego}: \url{https://github.com/MuhammadMoinFaisal/FireDetectionYOLOv8}.
+  \item \textbf{Armas}: \url{https://www.nature.com/articles/s41598-025-07782-0}, \url{https://github.com/swatified/Weapon-Detection-System}.
+  \item \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}  
+  \item \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}  
+  \item \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc}  
+  \item \url{https://www.youtube.com/watch?v=vEtsmg7-fWs}  
+  \item \textbf{Ataque de pánico, aglomeraciones}: \url{https://github.com/moego0/panic-attack-detector}, \url{https://github.com/jinay-k-jain/Panic_detector_CCTV}.
+  \end{itemize}
 \end{frame}
 
 \subsection{Infraestructura}
@@ -148,55 +220,12 @@
   \begin{enumerate}
   \item Una cámara $\rightarrow$ un propósito.
   \item Reducir FPS $\rightarrow$ no tiempo real.
-  \item Procesamiento centralizado (SPOF). ¿Pero como funciona vigilancia en urbanización?
+  \item Procesamiento centralizado (SPOF). ¿cómo vigilancia en urbanización?
+  \item Combiando estrategias (o aplicando divide y vencerás para el reparto de responsabilidad): \textit{edge} detecta que hay personas, \textit{server} averigua quienes son.
   \end{enumerate}
-
-  \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}
-  \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}
-  \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc}
-  \url{https://www.youtube.com/watch?v=vEtsmg7-fWs}
-
 \end{frame}
 
-\begin{frame}{¿Qué riesgos hay un aula?}
-  \small
-  \begin{table}[]
-    \centering
-    \begin{tabular}{p{2cm} p{4cm} p{6cm}}
-      \toprule
-      \textbf{Peligro} & \textbf{Detección Tradicional} & \textbf{Detección por Software (IA)} \\
-      \midrule
-      \textbf{Incendios} & Detectores de humo/térmicos. & \textbf{CNNs} entrenadas para reconocer patrones de flamas y comportamiento volumétrico del humo antes de que alcance el techo. \\
-      \midrule
-            \textbf{Amenazas \newline (Terrorismo)} & Botones de pánico, detectores de metales en puertas. & \textbf{Object Detection (YOLO/SSD)} para identificar armas. Análisis de pose (OpenPose) para detectar lenguaje corporal agresivo. \\
-            \midrule
-            \textbf{Inundaciones} & Sensores de humedad en zócalos. & Segmentación semántica para detectar cambios en la textura del suelo y acumulación de agua. \\
-            \bottomrule
-        \end{tabular}
-    \end{table}
-\end{frame}
-
-\begin{frame}{Profundización Técnica: Algoritmos de Detección}
-    Para la detección de amenazas mediante cámaras, se propone un pipeline de software:
-    
-    \vspace{0.3cm}
-    
-    \begin{enumerate}
-        \item \textbf{Pre-procesamiento:} Mejora de imagen low-light (para aulas oscuras).
-        \item \textbf{Inferencia:}
-            \begin{itemize}
-                \item \textit{Incendios:} Redes siamesas para diferenciar fuego real de pantallas/reflejos.
-                \item \textit{Intrusión:} Reconocimiento facial (con listas de control) y re-identificación de personas.
-            \end{itemize}
-        \item \textbf{Alerta:} Integración API con servicios de emergencia (sin intervención humana si la certeza $> 95\%$).
-    \end{enumerate}
-\end{frame}
-
-% =============================================================================
-% SECCIÓN 2: UTILIDADES DE PIZARRA
-% =============================================================================
 \section{Digitalización del Aula: Pizarra Inteligente}
-
 \begin{frame}{Captura Inteligente de Contenido}
     El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente.
     
