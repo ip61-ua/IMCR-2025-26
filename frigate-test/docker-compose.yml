@@ -1,0 +1,194 @@
+# =============================================================================
+# Full Face Recognition Test Stack
+# Services: fake-camera, mosquitto, frigate, compreface, double-take, homeassistant
+#
+# Pipeline:
+#   fake-camera (MJPEG) → frigate (detect) → MQTT → double-take → compreface
+#                                                                      ↓
+#                                             home-assistant ← MQTT results
+# =============================================================================
+
+networks:
+  iot-net:
+    driver: bridge
+
+volumes:
+  frigate-media:
+  compreface-db:
+  doubletake-storage:
+  homeassistant-config:
+  mosquitto-data:
+  mosquitto-log:
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # FAKE CAMERA
+  # Downloads 30 Unsplash street/people photos on startup, then loops them.
+  # Stream:   http://localhost:8090/stream
+  # Snapshot: http://localhost:8090/snapshot
+  # ---------------------------------------------------------------------------
+  fake-camera:
+    build:
+      context: ./fake-camera
+    container_name: fake-camera
+    restart: unless-stopped
+    ports:
+      - "8090:8080"
+    networks:
+      - iot-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s   # allow time for Unsplash batch download
+
+  # ---------------------------------------------------------------------------
+  # MOSQUITTO MQTT BROKER
+  # Built into image — no file mounts needed (fixes Windows Docker issue).
+  # Users auto-created on first start: see mosquitto-docker/docker-entrypoint.sh
+  # ---------------------------------------------------------------------------
+  mosquitto:
+    build:
+      context: ./mosquitto-docker
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - mosquitto-data:/mosquitto/data/db
+    networks:
+      - iot-net
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-p", "1883", "-u", "admin", "-P", "admin123", "-t", "healthcheck", "-m", "ping", "--quiet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # COMPREFACE
+  # Face recognition engine. Access UI at http://localhost:8000
+  # 1. Open UI → Create application → Create "Recognition" service
+  # 2. Copy the API key → paste into config/double-take/config.yml
+  # ---------------------------------------------------------------------------
+  compreface-postgres:
+    image: postgres:15-alpine
+    container_name: compreface-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: compreface
+      POSTGRES_PASSWORD: compreface123
+      POSTGRES_DB: compreface
+    volumes:
+      - compreface-db:/var/lib/postgresql/data
+    networks:
+      - iot-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U compreface"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  compreface:
+    image: exadel/compreface:latest
+    container_name: compreface
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    depends_on:
+      compreface-postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_URL: jdbc:postgresql://compreface-postgres:5432/compreface
+      POSTGRES_USER: compreface
+      POSTGRES_PASSWORD: compreface123
+      SPRING_PROFILES_ACTIVE: dev
+    networks:
+      - iot-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 40
+      start_period: 360s
+
+  # ---------------------------------------------------------------------------
+  # FRIGATE NVR
+  # Pulls stream from fake-camera, detects objects, publishes to MQTT.
+  # UI: http://localhost:5000
+  # ---------------------------------------------------------------------------
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    container_name: frigate
+    restart: unless-stopped
+    privileged: true
+    shm_size: "128mb"
+    ports:
+      - "5000:5000"
+      - "8554:8554"
+      - "8555:8555/tcp"
+      - "8555:8555/udp"
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      fake-camera:
+        condition: service_healthy
+    volumes:
+      - ./config/frigate/config.yml:/config/config.yml:ro
+      - frigate-media:/media/frigate
+    environment:
+      FRIGATE_RTSP_PASSWORD: "frigate_rtsp_pass"
+    networks:
+      - iot-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/version"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # DOUBLE-TAKE
+  # Listens to Frigate MQTT events, sends snapshots to CompreFace, republishes.
+  # UI: http://localhost:3000
+  # NOTE: Update config/double-take/config.yml with your CompreFace API key!
+  # ---------------------------------------------------------------------------
+  double-take:
+    image: jakowenko/double-take:latest
+    container_name: double-take
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      frigate:
+        condition: service_healthy
+    volumes:
+      - ./config/double-take/config.yml:/.double-take/config.yml:ro
+      - doubletake-storage:/.double-take
+    networks:
+      - iot-net
+
+  # ---------------------------------------------------------------------------
+  # HOME ASSISTANT
+  # Subscribes to MQTT for Frigate/Double-Take events.
+  # UI: http://localhost:8123
+  # ---------------------------------------------------------------------------
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "8123:8123"
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    volumes:
+      - ./config/homeassistant:/config
+    environment:
+      TZ: UTC
+    networks:
+      - iot-net

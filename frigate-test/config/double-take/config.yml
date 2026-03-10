@@ -1,0 +1,31 @@
+mqtt:
+  host: mosquitto
+  port: 1883
+  username: doubletake
+  password: doubletake123
+
+detectors:
+  compreface:
+    url: http://compreface:80
+    key: "d70097ae-805d-4eb2-ad3f-3c8f1e453f9f"
+    confidence: 0.4
+    min_face_size: 20
+
+cameras:
+  fake_cam:
+    snapshot:
+      url: http://fake-camera:8080/snapshot
+      timer: 5
+
+snapshots:
+  save: true
+  base: /double-take/.storage/snapshots
+
+auth: false
+
+time:
+  timezone: UTC
+  format: "YYYY-MM-DD HH:mm:ss"
+
+log:
+  level: verbose
