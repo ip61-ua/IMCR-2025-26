@@ -1,0 +1,437 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{booktabs}
+
+\title[Aula: Peligros y pizarra]{\textit{State of the Art}: peligros y pizarra del aula inteligente}
+\subtitle{Ingeniería de Mantenimiento de Computadores y Redes}
+\author{Propuesta por Ivan}
+\date{\today}
+
+\setcounter{tocdepth}{2}
+
+\AtBeginSection[]
+{
+  \begin{frame}{Índice}
+    \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}{Índice}
+    \tableofcontents[currentsection, currentsubsection, subsectionstyle=show/shaded/hide]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+  
+\begin{frame}{Índice}
+  \tableofcontents
+\end{frame}
+
+\section{Detección de peligros}
+
+\begin{frame}{Cambio de paradigma}
+  
+  \begin{block}{Objetivo}
+    Complementar sistemas reactivos basados en \textit{hardware} dedicado con sistemas proactivos basados en \textbf{visión artificial} (en adelante, CV por \textit{Computer Vision}).
+  \end{block}
+    
+  \vspace{0.5cm}
+    
+  \begin{itemize}
+  \item \textbf{\textit{Hardware} tradicional:} Sensores unifuncionales (humo, humedad, PIR). Entradas activas: botón, palanca, lógica con enfoque más \enquote{síncrono}.
+  \item \textbf{Enfoque \textit{software}/IA:} Uso de cámaras CCTV (cámaras de circuito cerrado, usadas para monitoreo de vídeo de seguridad) existentes + procesamiento en el borde (\textit{Edge Computing}) o \enquote{nube}.
+  \end{itemize}
+\end{frame}
+
+
+\subsection{Riesgos en el aula}
+\begin{frame}{¿Qué riesgos hay en un aula?}
+  \begin{itemize}
+  \item \textbf{Seguridad:}
+    \begin{itemize}
+    \item Violencia física (peleas, acoso).
+    \item Presencia de armas o bultos de objetos contundentes.
+    \item Intrusos en horarios restringidos.
+    \end{itemize}
+  \item \textbf{Integridad del entorno:}
+    \begin{itemize}
+    \item Incendios (análisis espectral y de movimiento).
+    \item Inundaciones (análisis de textura en suelos).
+    \item Bloqueo de salidas de emergencia (análisis espacial).
+    \item Terremotos y actividad sísmica (temblores).
+    \item Desprendimientos de objetos así como lanzamiento.
+    \item Vandalismo (pintadas, comportamiento canalla...).
+    \end{itemize}
+  \item \textbf{Salud y bienestar:}
+    \begin{itemize}
+    \item Caídas y desmayos.
+    \item Detección de pánico o aglomeraciones.
+    \item Contaminación acústica (ruido estridente, chillidos...).
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Tecnología útil}
+\begin{frame}{\large{\textbf{YOLO}} (\textit{You Only Look Once})}
+  \begin{itemize}
+  \item \textbf{Rápido y preciso}.
+  \item Sensibilidad a oclusiones.
+  \item \textbf{Navaja suiza}: Detección, segmentación, seguimiento, poses...
+  \item Código abierto (OSS, \textit{Open Source Software}). \url{https://github.com/ultralytics/ultralytics}.
+  \item Usado también para \textbf{atención de alumnos}: \url{https://www.mdpi.com/1424-8220/25/22/6972}
+  \item En \textbf{tiempo real} a través de cámaras IP a servidor local.
+  \item Usado para detectar robo, violencia, vandalismo, fuego...
+  \item Plausible en \textit{hardware} limitado si se relajan restricciones.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\textbf{Google MediaPipe}}
+  \begin{itemize}
+  \item Rápida sturación con multitud.
+  \item Eficiente al poder ejecutarse en \textbf{móviles} (pensado para sin GPU dedicada).
+  \item Mejor captura de la profundidad.
+  \item OSS.
+  \item \textbf{Navaja suiza}.
+  \item ¿Optimizado para Rasberry Pi? (\enquote{\textit{¿Gemini hablando bien de Google?}}).
+  \item \url{https://github.com/google-ai-edge/mediapipe}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\textbf{CNN} (\textit{Convolutional Neural Networks})}
+  \begin{itemize}
+  \item \textbf{Extracción de características:} Aprende automáticamente a detectar bordes, texturas y formas sin programación manual.
+  \item \textbf{Jerarquía Visual:} 
+    $$ \text{Bordes} \to \text{Formas simples} \to \text{Objetos complejos} $$
+  \item \textbf{Invarianza:} Reconoce el objeto independientemente de su posición $(x,y)$ en la imagen.
+  \item El \textbf{\textit{kernel}} (filtro) recorre la matriz de píxeles calculando el producto escalar para detectar patrones.
+  \item Sirve para audio también.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Violencia}
+  \begin{itemize}
+  \item La violencia es un \textbf{acto temporal} $\rightarrow$ secuencia memoria.
+  \item \textbf{YOLO} por si solo le cuesta $\rightarrow$ YOLO-Pose. Precisamos de una TPU si hacer en el \textit{edge}.
+  \item \textbf{YOLO-Pose/Google MediaPipe}+\textbf{LSTM} ({\small \textit{Long Short Term Memory}}).
+    \begin{itemize}
+    \item Clasificador temporal.
+    \item \textit{Hardware} modesto $\rightarrow$ \textbf{privacidad}.
+    \item \textbf{Oclusiones y OSS}.
+    \end{itemize}
+  \item \textbf{SlowFast}
+    \begin{itemize}
+    \item Preciso. De Facebook. OSS.
+    \item Computación pesada.
+    \item Dos modos de funcionamiento: \textit{slow} (¿quién es?), \textit{fast} (movimiento)
+    \end{itemize}
+  \item Ejemplo detección de violencia y vandalismo \url{https://github.com/Ab-code00/SurakshaAI---Real-Time-Suspicious-Activity-Detection-System}. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Detección de intrusos}
+  \begin{itemize}
+  \item \textbf{Objetivo}: saltar alarma si viene alguien no deseado en determinado horario. 
+  \item Cuádruple reto: \textbf{reconocimiento facial} + \textbf{horarios} + \textbf{lista blanca} + \textbf{privacidad}.
+  \item Variantes:
+    \begin{enumerate}
+    \item Naive: hay personas $\land$ fuera de horario $\rightarrow$ alarma.
+    \item Reconocer caras $\rightarrow$ ¿Privacidad? ¿Niños? ¿Ejercer derecho?. Necesidad de una DB actualizada $\rightarrow$ lío legal. 
+    \item ¿Quién decide entrar y hasta dónde puede? (Absurdo no dejar entrar visita, familiares, servicios públicos, nuevo personal $\notin$ DB) $\rightarrow$ ¿1984?
+    \end{enumerate}
+  \item Merodeos: \url{https://github.com/nwojke/deep_sort}.
+  \item \url{https://github.com/hectorpadin1/Network-Intrusion-Detection-System}.
+  \item Otro enfoque, analizar la red: \url{https://yardenfalik.github.io/IDS-Project/}. (Esto sale en la teoría de Sistemas Distribuidos).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Incendios e inundaciones}
+  Fuego
+  \begin{itemize}
+  \item \textbf{no tiene forma fija, \enquote{parpadea}, brilla, reflja}.
+  \item Puede producirse en \textbf{sitios ocultos} donde la cámara no vea.
+  \item Versiones \textit{custom} de YOLO.
+  \end{itemize}
+  {\large $\implies$ Detección por IA como complementario para anticipar.}
+  \normalsize
+  
+  \vspace{.5cm}
+  Agua
+  \begin{itemize}
+  \item \textbf{No se busca encontrar líquido} sino otras características.
+  \item \textbf{Reflejos} (da igual si es sucia o transparente).
+  \item Detección del suelo mojado píxel a píxel (U-Net, DeepLabV3+).
+  \item Causas naturales $\rightarrow$ otros asuntos, meteo...
+  \end{itemize}
+  \large $\implies$ Interés en prevenir (tuberías rotas, fraturas...). Conocer  aula concreta.
+  
+\end{frame}
+
+\begin{frame}{Caídas y desmayos}
+  \begin{itemize}
+  \item Heurísticas sobre la pose del esqueleto.
+    \begin{enumerate}
+    \item Cambio en la \textbf{relación de aspecto}.
+    \item \textbf{Velocidad} de descenso (¿se sienta o se cae?).
+    \item \textbf{Inactividad} (¿tropiezo o desmayo?).
+    \end{enumerate}
+  \item Otras situaciones.
+    \begin{itemize}
+    \item Deporte $\rightarrow$ \textit{fine tunning}, más movimiento.
+    \item \textit{Trolling} $\rightarrow$ al menos, 18 añitos tiene la criatura.
+    \end{itemize}
+  \item ¿Oclusión? Inferencia en base a lo visible.
+  \item Tecologías a gastar: YOLO, YOLO-pose, BoT-SORT y ByteTrack.
+  \item \textbf{OpenPifPaf}: \url{https://github.com/cwlroda/falldetection_openpifpaf}.
+  \item \textbf{AlphaPose}: \url{https://github.com/GajuuzZ/Human-Falling-Detect-Tracks}.
+  \item \textbf{Multicam}: \url{https://github.com/taufeeque9/HumanFallDetection}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Bloqueo de salidas}
+  Detectar objetos (mochilas, mesas) que permanecen en vías de evacuación o que impidan una salida normal. \textbf{Diferenciar un bloqueo real} de un tránsito momentáneo.
+  
+  \begin{block}{Algoritmo: IoU (\textit{Intersection over Union}) Temporal}
+    Sea $P_{salida}$ el polígono de la salida, $B_{bulto}$ la caja del objeto y $T$ el tiempo transcurrido desde que se detecta la obstrucción:
+    $$ \text{Solape} = \frac{\text{Área}(P_{salida} \cap B_{bulto})}{\text{Área}(P_{salida})} $$
+    $$ (\text{Solape} > 0.3) \land (T > 60s) \rightarrow \text{Alerta} $$
+  \end{block}
+\end{frame}
+
+\begin{frame}{Audio: gritos, auxilio, ruido estridente...}
+  \begin{itemize}
+  \item \textbf{Clasificador de sonido de Tensorflow} YAMNet \url{https://www.tensorflow.org/hub/tutorials/yamnet?hl=es-419}.
+  \item Micrófono I2S: \url{https://opencircuit.es/producto/fermion-i2s-mems-microphone-breakout}.
+  \end{itemize}
+  
+  \begin{columns}
+    \column{0.5\textwidth}
+    \textbf{Procesamiento (YAMNet):}
+    \begin{enumerate}
+    \item \textbf{Entrada:} Micrófono I2S (MEMS) en la Raspberry Pi.
+    \item \textbf{Preprocesar:} Transformada de Fourier $\to$ Mel-Spectrogram (Redes de los Computadores).
+    \item \textbf{Clasificación:} CNN ligera (MobileNet) entrenada en \textit{AudioSet}.
+    \end{enumerate}
+    
+    \column{0.4840829572\textwidth}
+    \centering
+    \begin{block}{Eventos Críticos}
+      \begin{itemize}
+      \item \textbf{Gritos:} Agresión o Pánico.
+      \item \textbf{Destrucción:} Vandalismo.
+      \item \textbf{Palabras clave:} \enquote{¡Socorro!}, \enquote{¡Ayuda!} (TinyML).
+      \end{itemize}
+    \end{block}
+    
+    Ejemplo: \url{https://github.com/Varun-310/SCREAM}
+  \end{columns}
+  
+  \vspace{0.3cm}
+  \textbf{Privacidad garantizada.} Almacenar ¿qué eventos peligrosos (\textit{Edge}).
+  \end{frame}
+
+\begin{frame}{No todo se detecta mejor con IA}
+  \begin{itemize}
+  \item \textbf{Fuegos, inundaciones}.
+  \item \textbf{Sismos} (ESP32 + MPU-6050): \url{https://github.com/serdaraltin/earthquake-warning-system}.
+  \item \textbf{SmartUniversity} IoT de la UA que captura diferentes parámetros de afluencia y temporal.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Demostraciones}
+  \begin{itemize}
+  \item \textbf{Fuego}: \url{https://github.com/MuhammadMoinFaisal/FireDetectionYOLOv8}.
+  \item \textbf{Armas}: \url{https://www.nature.com/articles/s41598-025-07782-0}, \url{https://github.com/swatified/Weapon-Detection-System}.
+  \item \textbf{Violencia}: \url{https://www.youtube.com/watch?v=a2xWqkFDYuU}, \url{https://www.youtube.com/watch?v=D4mjEBgAXPU}, \url{https://www.youtube.com/watch?v=qeFrjFa5Rxc} 
+  \item \textbf{Caídas}: \url{https://www.youtube.com/watch?v=vEtsmg7-fWs}  
+  \item \textbf{Ataque de pánico, aglomeraciones}: \url{https://github.com/moego0/panic-attack-detector}, \url{https://github.com/jinay-k-jain/Panic_detector_CCTV}.
+  \item \textbf{Vandalismo}: \url{https://ieeexplore.ieee.org/document/10895139}.
+  \end{itemize}
+\end{frame}
+
+\subsection{Infraestructura}
+\begin{frame}{¿Qué tenemos a disposición?}
+  \begin{itemize}
+  \item 600€ de presupuesto en nuevo \textit{hardware}.
+  \item Electrónica de otros años.
+    \begin{itemize}
+    \item Placas de Arduino.
+    \item Rasberry Pi.
+    \item ESP32.
+    \end{itemize}
+  \item Ordenadores del aula.
+    \begin{itemize}
+    \item GPU: Nvidia GTX 1660.
+    \end{itemize}
+  \end{itemize}
+
+  \begin{center}
+    \LARGE{\textbf{¡Relajar restricciones!}}
+  \end{center}
+
+  \begin{enumerate}
+  \item Una cámara $\rightarrow$ un propósito.
+  \item Reducir FPS $\rightarrow$ no tiempo real.
+  \item Procesamiento centralizado (SPOF). ¿vigilancia urbanización?
+  \item Combiando estrategias (o aplicando divide y vencerás para el reparto de responsabilidad): \textit{edge} detecta que hay personas, \textit{server} averigua quienes son.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Ejecución en \textit{hardware} limitado}
+  \small
+  No todo el \textit{hardware} puede procesar las millones de operaciones matriciales de una CNN. Clasificación por niveles:
+  
+  \vspace{0.3cm}
+  \begin{table}[]
+    \centering
+    \resizebox{\textwidth}{!}{
+      \begin{tabular}{l l l l}
+        \toprule
+        \textbf{Dispositivo} & \textbf{Capacidad CNN} & \textbf{Tecnología} & \textbf{Uso} \\
+        \midrule
+        \textbf{Raspberry Pi 5} & \textbf{Alta} & Python, TensorFlow, PyTorch & Corre YOLO/MediaPipe para análisis complejo. \\
+        \midrule
+        \textbf{ESP32-S3} & \textbf{Limitada (TinyML)} & TFLite Micro, C++ & Sensor auxiliar. Solo clasificación simple (Person/No-Person). \\
+        \midrule
+        \textbf{Arduino Uno} & \textbf{Nula} & - & Solo control de relés/luces. No procesa imagen. \\
+        \midrule
+        \textbf{Arduino Portenta} & \textbf{Media} & OpenMV, Edge Impulse & Similar al ESP32 pero grado industrial. \\
+        \bottomrule
+      \end{tabular}
+    }
+  \end{table}
+  \vspace{0.2cm} Es importante la \textbf{cuantización.} Para correr en ESP32, los modelos se comprimen de \texttt{float32} a \texttt{int8}, reduciendo el tamaño del modelo de 50MB a $<500$KB.
+  
+  \begin{center}
+    \LARGE{\textbf{¡Optimizar!}}
+  \end{center}
+\end{frame}
+
+\section{Pizarra++}
+\begin{frame}{Ideas para apuntar}
+  La pizarra es un recurso muy utilizado por el profesorado para ilustrar ideas, resolución de ejercicios y conceptos. La información de la pizarra al cabo de una sesión no está disponible. Lo cual dificulta el seguimiento de la clase para aquellos más despistados, sentados más lejos, lentitud, mala visibilidad o cualquier otra dificultad en tanto que interfiera...  
+  \vspace{1cm}
+  
+  \begin{enumerate}
+  \item Facilitar la \textbf{grabación y \textit{streaming}} de clases.
+  \item \textbf{Seguimiento de movimiento} del profesor para el punto anterior.
+  \item Guardar un \textbf{historial} del trazado de la pizarra.
+  \item \textbf{Transcripciones de voz} de la lección.
+  \item \textbf{Accesibilidad} (intérpretes, traductores...). 
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Experiencias previas}
+  \begin{enumerate}
+  \item Durante la pandemia del \textbf{covid}:
+    \begin{itemize}
+    \item Las reuniones a través de videollamadas.
+    \item Poca preparación, mal audio, aplicaciones propietarias (no FOSS).
+    \item Compatir pantalla, pizarra con mala visibiidad.
+    \item Profesores pueden emplear otras para difundir conocimiento: \url{https://youtu.be/_KNxz2YyhgA}. 
+    \end{itemize}
+  \item El seguimiento del movimiento del profesor puede hacerse de \textbf{forma automática} desde la configuración de algunas cámaras.
+    \begin{itemize}
+    \item \url{https://youtu.be/ZA-tUyM_y7s&t=120}.
+    \item Aunque siempre se deba contemplar una opción manual.
+    \end{itemize}
+  \item \textbf{Guardar algo escrito de la pizarra}.
+    \begin{itemize}
+    \item Fotos a la pizarra $\rightarrow$ mala calidad al detalle $\land$ rostros no deseados.
+    \item Materiales docentes, almacenamiento en la \enquote{nube}...
+    \end{itemize}
+  \item A partir de los vídeos \textbf{es posible extraer una transcripción}.
+  \item Garantizar \textbf{accesibilidad} para personas ciegas (braille), sordas de lo acontecido en la sección (generar intérpretes).
+  \end{enumerate}
+\end{frame}
+
+\subsection{Restricciones}
+\begin{frame}{Consideraciones}
+  El sistema debe:
+  \begin{itemize}
+  \item Estar \textbf{a merced del profesor} como una herramienta. Y es este quién decida cuando hacerla servir.
+  \item Garantizar la \textbf{privacidad} (GDPR). Tratamiendo de datos en \textit{edge} o en local.
+  \item Fácil mecanismo para \textbf{cambiar parámetros}: \textit{ON} $\leftrightarrow$ \textit{OFF}, historial sí $\leftrightarrow$ no, movimiento sí $\leftrightarrow$ no... 
+  \item \textbf{Independiente} al tipo de pizarra (da igual si es de tiza o digital).
+  \item Tener la posibilidad de guardar (\textbf{exportación}) el vídeo/traza de la pizarra en fichero.
+  \item ¿Tareas paralelas? (Grabar y sacar grabados de la pizarra).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Emisiones en vivo. Grabaciones.}
+  No es de extrañar que la mayoría de los profesores hagan servir el ordenador de clase para presentar transparencias. Donde pueden utilizarlo para configurar el directo y guardados.
+  \vspace{.5cm}
+  
+  Para una mayor permitir mayor flexibilidad puede:
+  \begin{itemize}
+  \item Tener un \textbf{mando IR} o \textbf{algo físico} que indique qué hacer a la cámara. (opción con limitaciones)
+  \item \textbf{Aplicación web} en la que el profesor decida los parámetros.
+  \end{itemize}
+
+  \vspace{.5cm}
+  También sería interesante conocer el horario del aula para notificar el cese del contenido y el uso que se le dé a la cámara.
+
+  \vspace{.5cm}  
+  Véase programas como OBS o VLC para la gestión multimedia. 
+\end{frame}
+
+\subsection{\textit{Software} para implementar}
+\begin{frame}{¿Cuándo capturar trazas?}  
+  
+  El sistema utiliza una cámara cenital o frontal para digitalizar la pizarra analógica automáticamente. Dos formas de hacerlo:
+  
+  \begin{columns}
+    \column{0.4840829572\textwidth}
+    \begin{block}{Disparador}
+      La captura se activa mediante un \textbf{botón físico} solicitado por el profesor al terminar una explicación.
+    \end{block}
+    
+    \column{0.4840829572\textwidth}
+    \begin{alertblock}{Detección automática}
+      Mediante \textbf{\textit{background subtraction}}, el \textit{software} detecta cuando la pizarra está \enquote{llena} y el profesor se aparta, disparando la foto automáticamente.
+    \end{alertblock}
+  \end{columns}
+
+  \begin{itemize}
+  \item Demo de \textit{background substraction} con OpenCV: \url{https://docs.opencv.org/4.x/d1/dc5/tutorial_background_subtraction.html}.
+  \item \textbf{Cámara PTZ con \textit{auto-tracking}}: \url{https://github.com/AutoPTZ/autoptz}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Privacidad y procesamiento}
+  \textbf{Proceso de anonimización:}
+  \begin{enumerate}
+  \item \textbf{Detección de rostros:} Uso de modelos ligeros (ej. MTCNN o Haar Cascades) para localizar caras en la imagen de la pizarra.
+  \item \textbf{Aplicación de difuminado:} Gaussiana sobre las regiones de interés (ROIs) detectadas.
+  \item \textbf{Rectificación de la perspectiva:} Algoritmo de homografía para transformar la foto lateral en una imagen plana escaneada.
+  \item \textbf{Mejora de contraste:} Binarización adaptativa para convertir trazos de tiza/rotulador en digital nítido.
+  \item \textbf{Extracción en texto:} Bien uitilizar OCR para sacar texto de imagen o Whisper (OpenAI) para el audio $\rightarrow$ transcripción y subtítulos.
+  \item \textbf{Exportación a múltiples formatos:} Bien entre documentos (pandoc) o entre vídeo (ffmpeg). 
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Enlaces de interés}
+  \begin{itemize}
+  \item \textbf{Pandoc:} \url{https://pandoc.org/}.
+  \item \textbf{ffmpeg:} \url{https://ffmpeg.org/}.
+  \item \textbf{Whisper:} \url{https://github.com/openai/whisper}.
+  \item \textbf{Tesseract OCR:} \url{https://github.com/tesseract-ocr/tesseract}.
+  \item \textbf{MTCNN:} \url{https://github.com/ipazc/mtcnn}.
+  \end{itemize}
+\end{frame}
+\end{document}

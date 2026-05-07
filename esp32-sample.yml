@@ -1,0 +1,60 @@
+esphome:
+  name: esphome-web-26bc68
+  friendly_name: b
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "Yi9JnE9Aiai0RkiQO40uqnUVkFY1i6r1rfFjC36I1Ek="
+
+ota:
+  - platform: esphome
+    password: "9f01d3fd61d3b20e67881e097a63fbe7"
+
+psram:
+    mode: octal
+
+esp32_camera:
+  name: Camara ESP32-S3
+
+  # Pines típicos (cambiar según tu placa)
+  external_clock:
+    pin: GPIO15
+    frequency: 20MHz
+
+  i2c_pins:
+    sda: GPIO4
+    scl: GPIO5
+
+  data_pins: [GPIO11, GPIO9, GPIO8, GPIO10, GPIO12, GPIO18, GPIO17, GPIO16]
+  vsync_pin: GPIO6
+  href_pin: GPIO7
+  pixel_clock_pin: GPIO13
+
+  resolution: 640x480
+  jpeg_quality: 10
+
+esp32_camera_web_server:
+  mode: stream
+  port: 8080
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  use_address: 192.168.1.238
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "B Fallback Hotspot"
+    password: "kRHnlgmud07V"
+
+captive_portal:
+    
