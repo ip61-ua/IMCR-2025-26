@@ -135,3 +135,13 @@ Ahora vete a http://localhost:6052/ y añade un nuevo dispositivo. Y en la confi
 Memorízate la clave de esp (parámetro `key`) porque es necesario para meterlo en el homeassistant. Si por lo que sea no va, desde el b.yml cambia el use_address a la dirección que te has memorizado antes. <3
 
 Crea desde el homeassistant (que ya deberías saber cómo entrar si has ido a clase de teoría) el dispotivo. Y mete el ssid y pass del wifi y además la key de antes de encriptación.
+
+## Ver desde terminal lo que se vaya publicando 
+
+``` bash
+
+docker exec -it mosquitto mosquitto_pub \
+-t asistencia \
+-m "hola"
+
+```
